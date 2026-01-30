@@ -5,7 +5,6 @@ import torch
 import numpy as np
 from pycocotools import mask as mask_utils
 
-from .common import SEG_QUESTIONS, ANSWER_LIST
 from .base import Sa2VABaseDataset
 
 from third_parts.mmdet.datasets.refcoco import RefCocoDataset
