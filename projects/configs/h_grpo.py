@@ -69,7 +69,7 @@ extra_image_processor = dict(
 #######################################################################
 model = dict(
     type=AerialR1Policy,
-    group_size=2,
+    group_size=8,
     consistency_beta=2.0,
     downsample_ratio=0.125,
     hallucination_penalty=2.0,
