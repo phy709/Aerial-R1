@@ -37,9 +37,10 @@ Our model is built upon the **Sa2VA** architecture (InternVL-Chat-V1.5 + SAM-2).
 ## 📂 Data Preparation
 
 We construct the **VSAI-Ref** benchmark based on the original VSAI dataset. 
-Due to the massive scale of the dataset and the ongoing peer review process, the fully processed multi-task dataset and annotations will be **released publicly upon paper acceptance**.
+The fully processed multi-task dataset, including the specific referring segmentation samples, VQA pairs, scene descriptions, and the dedicated Hard Negative subset, is now **publicly available**.
 
-Currently, this codebase provides the complete model architecture and training logic for inspection and reproducibility.
+You can download the complete VSAI-Ref benchmark from Hugging Face:
+* [🔗 Download VSAI-Ref Dataset](https://huggingface.co/datasets/phy9178/VSAI-Ref)
 
 ## 🚀 Training
 
