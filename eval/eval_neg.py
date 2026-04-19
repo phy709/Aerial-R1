@@ -60,7 +60,7 @@ def main():
     cfg = parse_args()
     os.makedirs(cfg.work_dir, exist_ok=True)
 
-    # 1. 加载测试基准数据
+
     print(f"Loading hard negative test set from: {cfg.test_json}")
     if not os.path.exists(cfg.test_json):
         print(f"Error: Test JSON not found at {cfg.test_json}")
@@ -71,7 +71,7 @@ def main():
         
     print(f"Total test cases to evaluate: {len(test_data)}")
 
-    # 2. 加载目标模型 (与提供的参考代码完全一致)
+
     print(f"Loading model from: {cfg.model}")
     try:
         model = AutoModelForCausalLM.from_pretrained(
@@ -83,14 +83,12 @@ def main():
         print(f"Failed to load model: {e}")
         return
 
-    # 统计指标
     total_count = 0
-    pass_count = 0  # 没画出东西（正确抵抗了幻觉）
-    fail_count = 0  # 画出了东西（产生了幻觉）
+    pass_count = 0  
+    fail_count = 0  
     total_hallucinated_pixels = 0
     detailed_logs = []
 
-    # 3. 逐个进行测试
     print("\nStarting evaluation on Hard Negatives...")
     for item in tqdm(test_data):
         image_filename = item['image']
@@ -106,9 +104,7 @@ def main():
             
         img_w, img_h = image.size
 
-        # =========================================================
-        # [推理核心] 使用与参考代码相同的接口
-        # =========================================================
+
         try:
             with torch.no_grad():
                 result = model.predict_forward(
@@ -121,10 +117,10 @@ def main():
             traceback.print_exc()
             continue
 
-        # 获取预测的 mask 列表
+
         pred_masks_raw = result.get("prediction_masks", [])
         
-        # 合并所有预测 Mask
+
         merged_pred_mask = np.zeros((img_h, img_w), dtype=np.uint8)
         
         if pred_masks_raw is not None and len(pred_masks_raw) > 0:
@@ -132,16 +128,16 @@ def main():
                 binary = binarize_and_resize_pred_mask(pm, img_h, img_w, thr=cfg.mask_thr)
                 merged_pred_mask = np.logical_or(merged_pred_mask, binary).astype(np.uint8)
 
-        # --- 判定逻辑 ---
+
         pred_pixels = np.sum(merged_pred_mask)
         total_count += 1
         
         if pred_pixels == 0:
-            # 成功：在难例面前依然没有画图
+
             pass_count += 1
             status = "PASS"
         else:
-            # 失败：被难例骗出幻觉了
+
             fail_count += 1
             total_hallucinated_pixels += pred_pixels
             status = "FAIL"
@@ -153,7 +149,7 @@ def main():
             "hallucinated_pixels": int(pred_pixels)
         })
 
-    # 4. 汇总与保存结果
+
     if total_count > 0:
         pass_rate = (pass_count / total_count) * 100
         avg_pixels = (total_hallucinated_pixels / fail_count) if fail_count > 0 else 0
